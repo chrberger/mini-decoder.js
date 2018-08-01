@@ -1,0 +1,6 @@
+[submodule "codecs/libvpx"]
+	path = codecs/libvpx
+	url = https://chromium.googlesource.com/webm/libvpx
+[submodule "codecs/openh264"]
+	path = codecs/openh264
+	url = https://github.com/cisco/openh264
