@@ -1,0 +1,36 @@
+diff --git a/Makefile b/Makefile
+index 701453a..9d56047 100644
+--- a/Makefile
++++ b/Makefile
+@@ -14,7 +14,7 @@ LIBSUFFIX=a
+ CCAS=$(CC)
+ CXX_O=-o $@
+ CXX_LINK_O=-o $@
+-AR_OPTS=cr $@
++AR_OPTS=rc $@
+ LINK_LOCAL_DIR=-L.
+ LINK_LIB=-l$(1)
+ CFLAGS_OPT=-O3
+@@ -53,7 +53,7 @@ endif
+ ifeq ($(BUILDTYPE), Release)
+ CFLAGS += $(CFLAGS_OPT)
+ CFLAGS += -DNDEBUG
+-USE_ASM = Yes
++USE_ASM = No
+ ifeq ($(DEBUGSYMBOLS), True)
+ CFLAGS += -g
+ CXXFLAGS += -g
+diff --git a/build/platform-linux.mk b/build/platform-linux.mk
+index 52230a2..56b0e32 100644
+--- a/build/platform-linux.mk
++++ b/build/platform-linux.mk
+@@ -6,7 +6,7 @@ SHLDFLAGS = -Wl,-soname,$(LIBPREFIX)$(PROJECT_NAME).$(SHAREDLIBSUFFIXMAJORVER)
+ CFLAGS += -Wall -fno-strict-aliasing -fPIC -MMD -MP
+ LDFLAGS += -lpthread
+ STATIC_LDFLAGS += -lpthread -lm
+-AR_OPTS = crD $@
++AR_OPTS = rc $@
+ ifeq ($(ASM_ARCH), x86)
+ ifeq ($(ARCH), x86_64)
+ ASMFLAGS += -f elf64
+
