@@ -2,6 +2,8 @@
 
 Simple raw video frame decoder for JavaScript using openh264 and libvpx libraries.
 
+This work is based on [https://github.com/kazuki/video-codec.js](https://github.com/kazuki/video-codec.js).
+
 ### Build
 
 We use Docker to build:
