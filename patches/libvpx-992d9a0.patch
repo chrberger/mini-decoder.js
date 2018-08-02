@@ -1,0 +1,14 @@
+diff --git a/build/make/configure.sh b/build/make/configure.sh
+index 9b6d8201f..e79033ea5 100644
+--- a/build/make/configure.sh
++++ b/build/make/configure.sh
+@@ -428,7 +428,7 @@ NM=${NM}
+ 
+ CFLAGS  = ${CFLAGS}
+ CXXFLAGS  = ${CXXFLAGS}
+-ARFLAGS = -rus\$(if \$(quiet),c,v)
++ARFLAGS = rus\$(if \$(quiet),c,v)
+ LDFLAGS = ${LDFLAGS}
+ ASFLAGS = ${ASFLAGS}
+ extralibs = ${extralibs}
+

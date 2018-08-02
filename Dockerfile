@@ -41,20 +41,56 @@ RUN cd ts && \
 # Use Bash by default from now.
 SHELL ["/bin/bash", "-c"]
 
+# Patch ts/emscripten.d.ts
+RUN cd ts && \
+    patch -p1 < ../patches/emscripten.d.ts.patch
+
 # Build openh264_decoder.js.
 RUN source /opt/emsdk/emsdk_env.sh && \
-    cd /opt/sources && \
-    cd ts && \
-    patch -p1 < ../patches/emscripten.d.ts.patch && \
     cd /opt/sources && \
     cd codecs/openh264 && \
     patch -p1 < ../../patches/openh264-v1.8.0.patch && \
     emmake make libopenh264.a && \
     cd /opt/sources && \
-    mkdir build && cd build && \
+    mkdir -p build && cd build && \
     tsc --out .openh264_decoder.js ../ts/openh264_decoder.ts && \
-    emcc -o /tmp/openh264_decoder.js -O3 --llvm-lto 1 --memory-init-file 0 -s BUILD_AS_WORKER=1 -s TOTAL_MEMORY=67108864 -s NO_FILESYSTEM=1 -s EXPORTED_FUNCTIONS="['_malloc']" -s EXPORTED_RUNTIME_METHODS="['setValue', 'getValue']" -I /opt/sources/codecs/openh264/codec/api/svc -s EXPORTED_FUNCTIONS="['_WelsCreateDecoder','_WelsInitializeDecoder','_WelsDecoderDecodeFrame','_SizeOfSBufferInfo']" --post-js .openh264_decoder.js /opt/sources/codecs/openh264/libopenh264.a ../bindings/openh264.c
+    emcc -o /tmp/openh264_decoder.js \
+         -O3 --llvm-lto 1 --memory-init-file 0 \
+         -s BUILD_AS_WORKER=1 -s TOTAL_MEMORY=67108864 \
+         -s NO_FILESYSTEM=1 \
+         -s EXPORTED_FUNCTIONS="['_malloc']" \
+         -s EXPORTED_RUNTIME_METHODS="['setValue', 'getValue']" \
+         -I /opt/sources/codecs/openh264/codec/api/svc \
+         -s EXPORTED_FUNCTIONS="['_WelsCreateDecoder','_WelsInitializeDecoder','_WelsDecoderDecodeFrame','_SizeOfSBufferInfo']" \
+         --post-js .openh264_decoder.js \
+         /opt/sources/codecs/openh264/libopenh264.a ../bindings/openh264.c
+
+# Build vpx_decoder.js.
+RUN source /opt/emsdk/emsdk_env.sh && \
+    cd /opt/sources && \
+    cd codecs/libvpx && \
+    patch -p1 < ../../patches/libvpx-992d9a0.patch && \
+    emconfigure ./configure \
+                --disable-multithread \
+                --target=generic-gnu \
+                --enable-vp10 \
+                --disable-docs \
+                --disable-examples && \
+    emmake make libvpx_g.a && \
+    cd /opt/sources && \
+    mkdir -p build && cd build && \
+    tsc --out .libvpx_decoder.js ../ts/libvpx_decoder.ts && \
+    emcc -o /tmp/libvpx_decoder.js \
+         -O3 --llvm-lto 1 --memory-init-file 0 \
+         -s BUILD_AS_WORKER=1 -s TOTAL_MEMORY=67108864 \
+         -s NO_FILESYSTEM=1 \
+         -s EXPORTED_FUNCTIONS="['_malloc']" \
+         -s EXPORTED_RUNTIME_METHODS="['setValue', 'getValue']" \
+         -I /opt/sources/codecs/libvpx/vpx \
+         -s EXPORTED_FUNCTIONS="['_vpx_codec_vp8_dx','_vpx_codec_vp9_dx','_vpx_codec_vp10_dx','_vpx_codec_dec_init2','_allocate_vpx_codec_ctx','_vpx_codec_dec_init_ver','_vpx_codec_decode','_vpx_codec_get_frame']" \
+         --post-js .libvpx_decoder.js \
+         /opt/sources/codecs/libvpx/libvpx_g.a ../bindings/libvpx.c
 
 # When running a Docker container based on this image, simply copy the results to /opt/output.
-CMD cp /tmp/openh264_decoder.js /opt/output/
+CMD cp /tmp/openh264_decoder.js /tmp/libvpx_decoder.js /opt/output/
 
