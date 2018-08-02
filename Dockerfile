@@ -26,6 +26,7 @@ RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
         npm \
         wget \
+        unzip \
         zip
 RUN npm install typescript -g
 
@@ -36,7 +37,12 @@ RUN cd ts && \
     echo "Retrieving es6-promise.d.ts v4.2.4 from https://github.com/stefanpenner/es6-promise." && \
     wget https://raw.githubusercontent.com/stefanpenner/es6-promise/314e4831d5a0a85edcb084444ce089c16afdcbe2/es6-promise.d.ts && \
     echo "Retrieving emscripten.d.ts v1.3.0 from https://github.com/DefinitelyTyped/DefinitelyTyped." && \
-    wget https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/1.3.0/emscripten/emscripten.d.ts
+    wget https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/1.3.0/emscripten/emscripten.d.ts && \
+    cd /opt && \
+    echo "Retrieving latest Google Closure compiler from https://dl.google.com/closure-compiler/compiler-latest.zip." && \
+    wget https://dl.google.com/closure-compiler/compiler-latest.zip && \
+    unzip compiler-latest.zip
+
 
 # Use Bash by default from now.
 SHELL ["/bin/bash", "-c"]
@@ -63,7 +69,9 @@ RUN source /opt/emsdk/emsdk_env.sh && \
          -I /opt/sources/codecs/openh264/codec/api/svc \
          -s EXPORTED_FUNCTIONS="['_WelsCreateDecoder','_WelsInitializeDecoder','_WelsDecoderDecodeFrame','_SizeOfSBufferInfo']" \
          --post-js .openh264_decoder.js \
-         /opt/sources/codecs/openh264/libopenh264.a ../bindings/openh264.c
+         /opt/sources/codecs/openh264/libopenh264.a ../bindings/openh264.c && \
+    java -jar /opt/closure-compiler-v*.jar --js /tmp/openh264_decoder.js --js_output_file /tmp/openh264_decoder.js.2 && \
+    mv /tmp/openh264_decoder.js.2 /tmp/openh264_decoder.js
 
 # Build vpx_decoder.js.
 RUN source /opt/emsdk/emsdk_env.sh && \
@@ -88,7 +96,9 @@ RUN source /opt/emsdk/emsdk_env.sh && \
          -I /opt/sources/codecs/libvpx/vpx \
          -s EXPORTED_FUNCTIONS="['_vpx_codec_vp8_dx','_vpx_codec_vp9_dx','_vpx_codec_dec_init2','_allocate_vpx_codec_ctx','_vpx_codec_dec_init_ver','_vpx_codec_decode','_vpx_codec_get_frame']" \
          --post-js .libvpx_decoder.js \
-         /opt/sources/codecs/libvpx/libvpx_g.a ../bindings/libvpx.c
+         /opt/sources/codecs/libvpx/libvpx_g.a ../bindings/libvpx.c && \
+    java -jar /opt/closure-compiler-v*.jar --js /tmp/libvpx_decoder.js --js_output_file /tmp/libvpx_decoder.js.2 && \
+    mv /tmp/libvpx_decoder.js.2 /tmp/libvpx_decoder.js
 
 # When running a Docker container based on this image, simply copy the results to /opt/output.
 CMD cp /tmp/openh264_decoder.js /tmp/libvpx_decoder.js /opt/output/
