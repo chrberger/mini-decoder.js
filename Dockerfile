@@ -73,7 +73,6 @@ RUN source /opt/emsdk/emsdk_env.sh && \
     emconfigure ./configure \
                 --disable-multithread \
                 --target=generic-gnu \
-                --enable-vp10 \
                 --disable-docs \
                 --disable-examples && \
     emmake make libvpx_g.a && \
@@ -87,7 +86,7 @@ RUN source /opt/emsdk/emsdk_env.sh && \
          -s EXPORTED_FUNCTIONS="['_malloc']" \
          -s EXPORTED_RUNTIME_METHODS="['setValue', 'getValue']" \
          -I /opt/sources/codecs/libvpx/vpx \
-         -s EXPORTED_FUNCTIONS="['_vpx_codec_vp8_dx','_vpx_codec_vp9_dx','_vpx_codec_vp10_dx','_vpx_codec_dec_init2','_allocate_vpx_codec_ctx','_vpx_codec_dec_init_ver','_vpx_codec_decode','_vpx_codec_get_frame']" \
+         -s EXPORTED_FUNCTIONS="['_vpx_codec_vp8_dx','_vpx_codec_vp9_dx','_vpx_codec_dec_init2','_allocate_vpx_codec_ctx','_vpx_codec_dec_init_ver','_vpx_codec_decode','_vpx_codec_get_frame']" \
          --post-js .libvpx_decoder.js \
          /opt/sources/codecs/libvpx/libvpx_g.a ../bindings/libvpx.c
 
