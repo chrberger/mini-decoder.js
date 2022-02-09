@@ -28,7 +28,7 @@ RUN apt-get update -y && \
         wget \
         unzip \
         zip
-RUN npm install typescript -g
+RUN npm install typescript@3.1.6 -g
 
 ADD . /opt/sources
 WORKDIR /opt/sources
@@ -98,5 +98,5 @@ RUN source /opt/emsdk/emsdk_env.sh && \
     mv /tmp/libvpx_decoder.js.2 /tmp/libvpx_decoder.js
 
 # When running a Docker container based on this image, simply copy the results to /opt/output.
-CMD cp /tmp/openh264_decoder.js /tmp/libvpx_decoder.js /opt/output/
+CMD mkdir -p /opt/sources/output && cp /tmp/openh264_decoder.js /tmp/libvpx_decoder.js /opt/sources/output/
 
