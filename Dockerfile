@@ -34,14 +34,11 @@ ADD . /opt/sources
 WORKDIR /opt/sources
 
 RUN cd ts && \
-    echo "Retrieving es6-promise.d.ts v4.2.4 from https://github.com/stefanpenner/es6-promise." && \
-    wget https://raw.githubusercontent.com/stefanpenner/es6-promise/314e4831d5a0a85edcb084444ce089c16afdcbe2/es6-promise.d.ts && \
-    echo "Retrieving emscripten.d.ts v1.3.0 from https://github.com/DefinitelyTyped/DefinitelyTyped." && \
-    wget https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/1.3.0/emscripten/emscripten.d.ts && \
+    wget https://raw.githubusercontent.com/chrberger/es6-promise/314e4831d5a0a85edcb084444ce089c16afdcbe2/es6-promise.d.ts && \
+    wget https://raw.githubusercontent.com/chrberger/depericated-DefinitelyTyped/1.3.0/emscripten/emscripten.d.ts && \
     cd /opt && \
-    echo "Retrieving latest Google Closure compiler from https://dl.google.com/closure-compiler/compiler-latest.zip." && \
-    wget https://dl.google.com/closure-compiler/compiler-latest.zip && \
-    unzip compiler-latest.zip
+    wget https://dl.google.com/closure-compiler/compiler-20200719.zip && \
+    unzip compiler-20200719.zip
 
 
 # Use Bash by default from now.
