@@ -28,25 +28,18 @@ RUN apt-get update -y && \
         wget \
         unzip \
         zip
-RUN npm install typescript@3.1.6 -g
+RUN npm install typescript@1.6.2 -g
 
 ADD . /opt/sources
 WORKDIR /opt/sources
 
-RUN cd ts && \
-    wget https://raw.githubusercontent.com/chrberger/es6-promise/314e4831d5a0a85edcb084444ce089c16afdcbe2/es6-promise.d.ts && \
-    wget https://raw.githubusercontent.com/chrberger/depericated-DefinitelyTyped/1.3.0/emscripten/emscripten.d.ts && \
-    cd /opt && \
-    wget https://dl.google.com/closure-compiler/compiler-20200719.zip && \
-    unzip compiler-20200719.zip
+RUN cd /opt && \
+    wget https://dl.google.com/closure-compiler/compiler-20180716.zip && \
+    unzip compiler-20180716.zip
 
 
 # Use Bash by default from now.
 SHELL ["/bin/bash", "-c"]
-
-# Patch ts/emscripten.d.ts
-RUN cd ts && \
-    patch -p1 < ../patches/emscripten.d.ts.patch
 
 # Build openh264_decoder.js.
 RUN source /opt/emsdk/emsdk_env.sh && \
@@ -56,7 +49,7 @@ RUN source /opt/emsdk/emsdk_env.sh && \
     emmake make libopenh264.a && \
     cd /opt/sources && \
     mkdir -p build && cd build && \
-    tsc --out .openh264_decoder.js ../ts/openh264_decoder.ts && \
+    tsc --out .openh264_decoder.js ../openh264_decoder.ts && \
     emcc -o /tmp/openh264_decoder.js \
          -O3 --llvm-lto 1 --memory-init-file 0 \
          -s BUILD_AS_WORKER=1 -s TOTAL_MEMORY=67108864 \
@@ -83,7 +76,7 @@ RUN source /opt/emsdk/emsdk_env.sh && \
     emmake make libvpx_g.a && \
     cd /opt/sources && \
     mkdir -p build && cd build && \
-    tsc --out .libvpx_decoder.js ../ts/libvpx_decoder.ts && \
+    tsc --out .libvpx_decoder.js ../libvpx_decoder.ts && \
     emcc -o /tmp/libvpx_decoder.js \
          -O3 --llvm-lto 1 --memory-init-file 0 \
          -s BUILD_AS_WORKER=1 -s TOTAL_MEMORY=67108864 \

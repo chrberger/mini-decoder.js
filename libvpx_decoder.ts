@@ -1,5 +1,5 @@
 /// <reference path="api.ts" />
-/// <reference path="emscripten.d.ts" />
+/// <reference path="typings/emscripten.d.ts" />
 
 declare function _vpx_codec_vp8_dx(): number;
 declare function _vpx_codec_vp9_dx(): number;

@@ -1,5 +1,5 @@
 /// <reference path="api.ts" />
-/// <reference path="emscripten.d.ts" />
+/// <reference path="typings/emscripten.d.ts" />
 
 declare function _WelsCreateDecoder(ptr: number): number;
 declare function _WelsInitializeDecoder(ptr: number): number;

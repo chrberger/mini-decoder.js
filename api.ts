@@ -1,4 +1,4 @@
-/// <reference path="es6-promise.d.ts" />
+/// <reference path="typings/es6-promise.d.ts" />
 
 interface VideoInfo {
     width: number;
